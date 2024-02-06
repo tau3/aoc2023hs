@@ -1,4 +1,4 @@
-module Day6 (solve) where
+module Day6 (solvePt1, solvePt2) where
 
 waysToWin :: Int -> Int -> Int
 waysToWin time distance = length beats
@@ -18,8 +18,20 @@ dropHead :: [n] -> [n]
 dropHead (_ : xs) = xs
 dropHead [] = error "unexpected empty list"
 
-solve :: [String] -> Int
-solve xs = product each_solved
+solvePt1 :: [String] -> Int
+solvePt1 xs = product each_solved
   where
     parsed = parse xs
     each_solved = map (uncurry waysToWin) parsed
+
+solvePt2 :: [String] -> Int
+solvePt2 xs = waysToWin x y
+  where
+    (x, y) = parse2 xs
+
+parse2 :: [String] -> (Int, Int)
+parse2 xs = (read (numbers !! 0), read (numbers !! 1))
+  where
+    tokens = map words xs
+    onlyRawNumbers = map dropHead tokens
+    numbers = map concat onlyRawNumbers
