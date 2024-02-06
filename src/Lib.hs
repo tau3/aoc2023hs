@@ -5,5 +5,3 @@ module Lib
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-someASd :: Int
-someASd = 5
