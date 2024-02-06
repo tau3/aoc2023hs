@@ -4,13 +4,13 @@ waysToWin :: Int -> Int -> Int
 waysToWin time distance = length beats
   where
     starts = [0 .. time]
-    speeds = map (\s -> s * (time - s)) starts
+    speeds = map (\speed -> speed * (time - speed)) starts
     beats = filter (> distance) speeds
 
-parse :: [String] -> [(Int, Int)]
-parse ls = zip (head numbers) (numbers !! 1)
+parsePt1 :: [String] -> [(Int, Int)]
+parsePt1 input = zip (head numbers) (numbers !! 1)
   where
-    tokens = map words ls
+    tokens = map words input
     onlyRawNumbers = map dropHead tokens
     numbers = map (map (\raw -> read raw :: Int)) onlyRawNumbers
 
@@ -21,17 +21,17 @@ dropHead [] = error "unexpected empty list"
 solvePt1 :: [String] -> Int
 solvePt1 xs = product each_solved
   where
-    parsed = parse xs
+    parsed = parsePt1 xs
     each_solved = map (uncurry waysToWin) parsed
 
 solvePt2 :: [String] -> Int
-solvePt2 xs = waysToWin x y
+solvePt2 input = waysToWin time distance
   where
-    (x, y) = parse2 xs
+    (time, distance) = parsePt2 input
 
-parse2 :: [String] -> (Int, Int)
-parse2 xs = (read (numbers !! 0), read (numbers !! 1))
+parsePt2 :: [String] -> (Int, Int)
+parsePt2 input = (read $ head numbers, read $ numbers !! 1)
   where
-    tokens = map words xs
+    tokens = map words input
     onlyRawNumbers = map dropHead tokens
     numbers = map concat onlyRawNumbers
