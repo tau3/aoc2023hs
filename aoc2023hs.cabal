@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Day6
+      Day7
       Lib
   other-modules:
       Paths_aoc2023hs
