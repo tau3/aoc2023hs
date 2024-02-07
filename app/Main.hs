@@ -1,9 +1,16 @@
 module Main (main) where
 
 import Day7
-
-input :: [String]
-input = ["32T3K 765", "T55J5 684", "KK677 28", "KTJJT 220", "QQQJA 483"]
+import System.Directory (getCurrentDirectory)
+import System.IO (IOMode (ReadMode), hClose, hGetContents, openFile)
 
 main :: IO ()
-main = print $ solvePt1 $ parse input
+main = do
+  pwd <- getCurrentDirectory
+  print pwd
+  handle <- openFile "../resources/day7_input" ReadMode
+  contents <- hGetContents handle
+  let input = lines contents
+  print $ solvePt1 $ parse input
+  hClose handle
+  return ()
