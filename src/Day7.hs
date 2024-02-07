@@ -1,20 +1,24 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
 
-module Day7 (solvePt1) where
+module Day7 (solvePt1, parse) where
 
 import Data.List (sort)
 import Data.List.NonEmpty (group)
 import GHC.Exts (sortWith)
 
+parse :: [String] -> [(Hand String, Int)]
+parse xs = map (\s -> (makeHand (head s), read (s !! 1) :: Int)) splits
+  where
+    splits = map words xs
+
 solvePt1 :: [(Hand String, Int)] -> Int
 solvePt1 hands = sum $ map (\(index, (_, bid)) -> index * bid) iterated
   where
     sorted = sortWith fst hands
-    losers = init sorted
-    iterated = zip [1 ..] losers
+    iterated = zip [1 ..] sorted
 
-data Card = A | K | Q | J | T | Nine | Eight | Seven | Six | Five | Four | Three | Two deriving (Eq, Ord)
+data Card = Two | Three | Four | Five | Six | Seven | Eight | Nine | T | J | Q | K | A deriving (Eq, Ord, Show)
 
 makeCard :: Char -> Card
 makeCard 'A' = A
@@ -30,7 +34,7 @@ makeCard '5' = Five
 makeCard '4' = Four
 makeCard '3' = Three
 makeCard '2' = Two
-makeCard _ = error "unknown card"
+makeCard c = error $ "unknown card " ++ [c]
 
 data Hand a where
   FiveOfAKind :: a -> Hand a
@@ -40,6 +44,7 @@ data Hand a where
   TwoPair :: a -> Hand a
   OnePair :: a -> Hand a
   HighCard :: a -> Hand a
+  deriving (Show)
 
 instance (Eq a) => Eq (Hand a) where
   (==) (FiveOfAKind a) (FiveOfAKind b) = a == b
@@ -81,16 +86,16 @@ instance Ord (Hand String) where
   compare (HighCard a) (HighCard b) = compareSameHand a b
 
 makeHand :: String -> Hand String
-makeHand xs
-  | counts xs == [5] = FiveOfAKind xs
-  | counts xs == [1, 4] = FourOfAKind xs
-  | counts xs == [2, 3] = FullHouse xs
-  | counts xs == [1, 1, 3] = ThreeOfAKind xs
-  | counts xs == [1, 2, 2] = TwoPair xs
-  | counts xs == [1, 1, 1, 2] = OnePair xs
-  | otherwise = HighCard xs
+makeHand hand
+  | counts hand == [5] = FiveOfAKind hand
+  | counts hand == [1, 4] = FourOfAKind hand
+  | counts hand == [2, 3] = FullHouse hand
+  | counts hand == [1, 1, 3] = ThreeOfAKind hand
+  | counts hand == [1, 2, 2] = TwoPair hand
+  | counts hand == [1, 1, 1, 2] = OnePair hand
+  | otherwise = HighCard hand
 
 counts :: String -> [Int]
-counts xs = sort $ map length $ asd xs
+counts hand = sort $ map length $ orderedGroups hand
   where
-    asd = group . sort
+    orderedGroups = group . sort

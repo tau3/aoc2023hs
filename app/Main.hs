@@ -1,10 +1,9 @@
 module Main (main) where
 
-import Day6
+import Day7
 
 input :: [String]
--- input = ["Time:      7  15   30", "Distance:  9  40  200"]
-input = ["Time:        54     81     70     88", "Distance:   446   1292   1035   1007"]
+input = ["32T3K 765", "T55J5 684", "KK677 28", "KTJJT 220", "QQQJA 483"]
 
 main :: IO ()
-main = print $ solvePt2 input
+main = print $ solvePt1 $ parse input
