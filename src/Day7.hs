@@ -1,18 +1,16 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE InstanceSigs #-}
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 
 module Day7 (solvePt1) where
 
-import Data.Foldable (for_)
-import Data.Functor.Product (Product (Pair))
-import GHC.Float (expts, rationalToDouble)
-import GHC.IO.Exception (IOErrorType (UnsupportedOperation))
+import Data.List (sort)
+import Data.List.NonEmpty (group)
+import GHC.Exts (sortWith)
 
 solvePt1 :: [(Hand String, Int)] -> Int
-solvePt1 hands = sum $ map (\(index, (_, bid)) -> index * bid)
+solvePt1 hands = sum $ map (\(index, (_, bid)) -> index * bid) iterated
   where
-    sorted = sort fst hands
+    sorted = sortWith fst hands
     losers = init sorted
     iterated = zip [1 ..] losers
 
@@ -44,7 +42,6 @@ data Hand a where
   HighCard :: a -> Hand a
 
 instance (Eq a) => Eq (Hand a) where
-  (==) :: Hand a -> Hand a -> Bool
   (==) (FiveOfAKind a) (FiveOfAKind b) = a == b
   (==) (FourOfAKind a) (FourOfAKind b) = a == b
   (==) (FullHouse a) (FullHouse b) = a == b
@@ -54,32 +51,38 @@ instance (Eq a) => Eq (Hand a) where
   (==) (HighCard a) (HighCard b) = a == b
   (==) _ _ = False
 
--- TODO compare all five
-compareSameHand :: String -> String -> Ord
-compareSameHand l r = compare l' r'
+compareSameHand :: String -> String -> Ordering
+compareSameHand l r = cmp' l' r'
   where
     l' = map makeCard l
     r' = map makeCard r
-    cmp' (x:xs) (y:ys) = if x != y then compare x y else cmp' xs ys
+    cmp' (x : xs) (y : ys) = if x == y then cmp' xs ys else compare x y
+    cmp' _ _ = error $ "completely equal hands: " ++ l ++ " and " ++ r
 
 instance Ord (Hand String) where
   compare (FiveOfAKind a) (FiveOfAKind b) = compareSameHand a b
   compare (FiveOfAKind _) _ = GT
+  compare _ (FiveOfAKind _) = LT
   compare (FourOfAKind a) (FourOfAKind b) = compareSameHand a b
-  compare (FourOfAKind a) _ = GT
+  compare (FourOfAKind _) _ = GT
+  compare _ (FourOfAKind _) = LT
   compare (FullHouse a) (FullHouse b) = compareSameHand a b
-  compare (FullHouse a) _ = GT
+  compare (FullHouse _) _ = GT
+  compare _ (FullHouse _) = LT
   compare (ThreeOfAKind a) (ThreeOfAKind b) = compareSameHand a b
-  compare (ThreeOfAKind a) _ = GT
+  compare (ThreeOfAKind _) _ = GT
+  compare _ (ThreeOfAKind _) = LT
   compare (TwoPair a) (TwoPair b) = compareSameHand a b
-  compare (TwoPair a) _ = GT
+  compare (TwoPair _) _ = GT
+  compare _ (TwoPair _) = LT
   compare (OnePair a) (OnePair b) = compareSameHand a b
-  compare (OnePair a) _ = GT
+  compare (OnePair _) _ = GT
+  compare _ (OnePair _) = GT
   compare (HighCard a) (HighCard b) = compareSameHand a b
 
 makeHand :: String -> Hand String
 makeHand xs
-  | allTheSame xs = FiveOfAKind xs
+  | counts xs == [5] = FiveOfAKind xs
   | counts xs == [1, 4] = FourOfAKind xs
   | counts xs == [2, 3] = FullHouse xs
   | counts xs == [1, 1, 3] = ThreeOfAKind xs
@@ -88,6 +91,6 @@ makeHand xs
   | otherwise = HighCard xs
 
 counts :: String -> [Int]
-counts xs = sort $ map length asd
+counts xs = sort $ map length $ asd xs
   where
     asd = group . sort
