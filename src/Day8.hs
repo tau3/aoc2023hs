@@ -20,8 +20,8 @@ solvePt1 path graph = go "AAA" 0
 parseInput :: [String] -> (String, M.Map String (String, String))
 parseInput input = (path, graph)
   where
-    path = head input
-    graph = M.fromList $ map parseGraphLine $ tail $ tail input
+    (path:_:graphData) = input
+    graph = M.fromList $ map parseGraphLine graphData
 
 parseGraphLine :: String -> (String, (String, String))
 parseGraphLine l = (key, (left', right'))
