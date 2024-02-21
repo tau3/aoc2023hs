@@ -1,5 +1,5 @@
-import Day8
 import Day11
+import Day8
 import Test.Hspec
 
 main :: IO ()
@@ -11,25 +11,21 @@ main = hspec $ do
       run ["LLR", "", "AAA = (BBB, BBB)", "BBB = (AAA, ZZZ)", "ZZZ = (ZZZ, ZZZ)"] `shouldBe` 6
   describe "Day 11" $ do
     it "Example 1" $ do
-     Day11.solvePt1 day11Input `shouldBe` 374 
+      Day11.solvePt1 day11Input `shouldBe` 374
 
 run :: [String] -> Int
 run input = Day8.solvePt1 a b where (a, b) = parseInput input
 
 day11Input :: [String]
 day11Input =
-  [ "....#........",
-    ".........#...",
-    "#............",
-    ".............",
-    ".............",
-    "........#....",
-    ".#...........",
-    "............#",
-    ".............",
-    ".............",
-    ".........#...",
-    "#....#......."
+  [ "...#......",
+    ".......#..",
+    "#.........",
+    "..........",
+    "......#...",
+    ".#........",
+    ".........#",
+    "..........",
+    ".......#..",
+    "#...#....."
   ]
-
-
