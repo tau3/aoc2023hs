@@ -1,13 +1,19 @@
-module Day11 (solvePt1) where
+module Day11 (solvePt1, solvePt2) where
 
 import Data.List (tails)
 
 solvePt1 :: [String] -> Int
-solvePt1 input = sum distances
+solvePt1 input = solve input 2
+
+solvePt2 :: [String] ->Int -> Int
+solvePt2 = solve
+
+solve :: [String] -> Int -> Int
+solve input expansion = sum distances
   where
     State _ emptyColumns emptyRows galaxies = parse input
     allPairs = pairs galaxies
-    distances = map (\(l, r) -> distance l r emptyColumns emptyRows) allPairs
+    distances = map (\(l, r) -> distance l r emptyColumns emptyRows expansion) allPairs
 
 parse :: [String] -> State
 parse grid = go initial 0 0
@@ -47,8 +53,8 @@ data State = State !Grid !EmptyColumns !EmptyRows !Galaxies
 between :: Int -> Int -> Int -> Bool
 between a b c = if a > b then (c > b) && (c < a) else (c > a) && (c < b)
 
-distance :: Point -> Point -> EmptyColumns -> EmptyRows -> Int
-distance (lr, lc) (rr, rc) emptyColumns emptyRows = dx + dy + emptyColumnsCount + emptyRowsCount
+distance :: Point -> Point -> EmptyColumns -> EmptyRows -> Int -> Int
+distance (lr, lc) (rr, rc) emptyColumns emptyRows expansion = dx + dy + (expansion - 1) * (emptyColumnsCount + emptyRowsCount)
   where
     dx = abs (lc - rc)
     dy = abs (lr - rr)
