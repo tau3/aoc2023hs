@@ -5,7 +5,7 @@ import Data.List (tails)
 solvePt1 :: [String] -> Int
 solvePt1 input = solve input 2
 
-solvePt2 :: [String] ->Int -> Int
+solvePt2 :: [String] -> Int -> Int
 solvePt2 = solve
 
 solve :: [String] -> Int -> Int
