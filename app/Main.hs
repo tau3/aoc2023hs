@@ -8,7 +8,7 @@ main :: IO ()
 main = do
   pwd <- getCurrentDirectory
   print pwd
-  handle <- openFile "resources/day11_example" ReadMode
+  handle <- openFile "resources/day11_input" ReadMode
   contents <- hGetContents handle
   let input = lines contents
   print $ solvePt1 input

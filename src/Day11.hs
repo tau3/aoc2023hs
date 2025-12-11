@@ -24,10 +24,10 @@ solve :: Graph -> Int
 solve graph = go [] "you" 0
   where
     go :: [String] -> String -> Int -> Int
-    go visited start subResult =
-      if start == "out"
-        then subResult
-        else sum (map (\vertice -> go visited' vertice (subResult + 1)) adjacent'')
+    go visited start subResult
+      | start == "out" = 1
+      | null adjacent'' = 0
+      | otherwise = sum (map (\vertice -> go visited' vertice (subResult + 1)) adjacent'')
       where
         adjacent = M.lookup start graph
         adjacent' = orElse adjacent []
