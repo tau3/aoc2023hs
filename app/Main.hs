@@ -11,6 +11,6 @@ main = do
   handle <- openFile "resources/day11_input" ReadMode
   contents <- hGetContents handle
   let input = lines contents
-  print $ solvePt1 input
+  print $ solvePt2 input
   hClose handle
   return ()
