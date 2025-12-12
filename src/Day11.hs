@@ -1,14 +1,13 @@
 module Day11 (solvePt1, solvePt2) where
 
-import Data.HashMap.Strict as M (HashMap, empty, insert, lookup, union, (!?), member)
-import Debug.Trace (trace)
+import Data.HashMap.Strict as M (HashMap, empty, insert, lookup, member, union, (!))
 import GHC.List as L (foldl')
 
 solvePt1 :: [String] -> Int
 solvePt1 xs = solve (inputToGraph xs) "you"
 
 solvePt2 :: [String] -> Int
-solvePt2 xs = solve2 (inputToGraph xs) "svr"
+solvePt2 xs = solve2 (inputToGraph xs)
 
 minus :: (Eq a) => [a] -> [a] -> [a]
 minus left right = filter (`notElem` right) left
@@ -38,54 +37,36 @@ solve graph start = go [] start 0
         adjacent'' = minus adjacent' visited
         visited' = currentStart : visited
 
--- solve2 :: Graph -> String -> Int
--- solve2 graph start = fst $ go [] (trace "START" start) M.empty
---   where
---     go :: [String] -> String -> Memo -> (Int, Memo)
---     go path from memo
---       | from == "out" = if (&&) ("fft" `elem` path) ("dac" `elem` path) then (1, memo) else (0, memo)
---       | null adjacent'' = trace "dead end" (0, memo)
---       | otherwise = case M.lookup from (trace ("cache"++show memo) memo) of
---           Just val -> trace "hit" (val, memo)
---           Nothing ->
---             let (p,s) =
---                   foldl'
---                     ( \(i, m) vertice ->
---                         let (si, sm) = go path' vertice memo
---                          in (si + i, M.union m sm)
---                     )
---                     (0, memo)
---                     adjacent''
---              in (p, M.insert (head path) p s)
-
---       where
---         adjacent = M.lookup from graph
---         adjacent' = orElse adjacent []
---         adjacent'' = minus adjacent' path
---         path' = path ++ [from]
-
-solve2 :: Graph -> String -> Int
-solve2 g st = fst $ cp2 g st [] M.empty
-
-cp2:: Graph -> String -> [String] -> Memo -> (Int, Memo)
-cp2 g f p m 
-  | M.member f m  = (unJust $ M.lookup f m, trace ("cache" ++ show m) m)
-  | f == "out" = if (&&) ("fft" `elem` p) ("dac" `elem` p) then (1, m) else (0, m)
-  | M.lookup f g == Nothing = (0, M.insert (last p) 0 m)
-  | M.lookup f g == Just[] = (0, M.insert (last p) 0 m)
-  | otherwise = let a = unJust $ M.lookup f g
-                    a' = minus a p  
-                    (r, m') = foldl' (\(sr, sm) v-> let (ssr, ssm) = cp2 g v (p ++[f]) m in (ssr+sr, M.union sm ssm)) (0, m) a'
-                in (r, M.insert (last p) r m')
-  
+solve2 :: Graph -> Int
+solve2 graph = fst $ go "svr" [] M.empty
+  where
+    go :: String -> [String] -> Memo -> (Int, Memo)
+    go current path memo
+      | M.member current memo =
+          let cacheHit = memo ! current
+           in (cacheHit, memo)
+      | current == "out" =
+          let isValidPath = (&&) ("fft" `elem` path) ("dac" `elem` path)
+           in if isValidPath then (1, memo) else (0, memo)
+      | not $ M.member current graph = (0, M.insert (last path) 0 memo)
+      | M.lookup current graph == Just [] = (0, M.insert (last path) 0 memo)
+      | otherwise =
+          let adjacent = graph ! current
+              adjacent' = minus adjacent path
+              (result, memo') =
+                foldl'
+                  ( \(accResult, accMemo) vertice ->
+                      let (accResult', accMemo') = go vertice (path ++ [current]) accMemo
+                       in (accResult' + accResult, M.union accMemo accMemo')
+                  )
+                  (0, memo)
+                  adjacent'
+              memo'' = M.insert (last path) result memo'
+           in (result, memo'')
 
 type Graph = M.HashMap String [String]
 
 type Memo = M.HashMap String Int
-
-unJust::Maybe a -> a
-unJust (Nothing) = error "fail"
-unJust (Just x) = x
 
 orElse :: Maybe a -> a -> a
 orElse Nothing a = a
