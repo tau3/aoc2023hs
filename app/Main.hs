@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Day11
+import Day12
 import System.Directory (getCurrentDirectory)
 import System.IO (IOMode (ReadMode), hClose, hGetContents, openFile)
 
@@ -8,10 +8,9 @@ main :: IO ()
 main = do
   pwd <- getCurrentDirectory
   print pwd
-  -- handle <- openFile "resources/day11_pt2_example" ReadMode
-  handle <- openFile "resources/day11_input" ReadMode
+  handle <- openFile "resources/day12_input" ReadMode
   contents <- hGetContents handle
   let input = lines contents
-  print $ solvePt2 input
+  print $ solve input
   hClose handle
   return ()
