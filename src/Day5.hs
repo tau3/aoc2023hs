@@ -2,10 +2,10 @@ module Day5 (solve) where
 
 import Data.List (isInfixOf)
 
-containsTwice :: String -> Bool
-containsTwice (x1 : x2 : xs) = (x1 == x2) || containsTwice (x2 : xs)
-containsTwice [] = False
-containsTwice [_] = False
+containsAnyLetterTwiceInRow :: String -> Bool
+containsAnyLetterTwiceInRow (x1 : x2 : xs) = (x1 == x2) || containsAnyLetterTwiceInRow (x2 : xs)
+containsAnyLetterTwiceInRow [] = False
+containsAnyLetterTwiceInRow [_] = False
 
 hasForbidden :: String -> Bool
 hasForbidden xs = any (`isInfixOf` xs) forbidden
@@ -22,7 +22,23 @@ count _ [] = 0
 count f (x : xs) = if f x then 1 + count f xs else count f xs
 
 isNice :: String -> Bool
-isNice xs = containsTwice xs && not (hasForbidden xs) && hasThreeVowels xs
+isNice xs = containsAnyLetterTwiceInRow xs && not (hasForbidden xs) && hasThreeVowels xs
 
 solve :: [String] -> Int
-solve = count isNice
+solve = count isNice2
+
+hasRepeatablePair :: String -> Bool
+hasRepeatablePair [] = False
+hasRepeatablePair [_] = False
+hasRepeatablePair [_, _] = False
+hasRepeatablePair [_, _, _] = False
+hasRepeatablePair (x1 : x2 : xs) = [x1, x2] `isInfixOf` xs
+
+hasLetterInBetween :: String -> Bool
+hasLetterInBetween [] = False
+hasLetterInBetween [_] = False
+hasLetterInBetween [_, _] = False
+hasLetterInBetween (x1 : x2 : x3 : xs) = (x1 == x3) || hasLetterInBetween (x2 : x3 : xs)
+
+isNice2 :: String -> Bool
+isNice2 xs = hasRepeatablePair xs && hasLetterInBetween xs
