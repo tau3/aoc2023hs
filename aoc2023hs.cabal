@@ -28,6 +28,8 @@ library
       Day1
       Day2
       Day3
+      Day4
+      Day5
       Lib
   other-modules:
       Paths_aoc2023hs
@@ -38,9 +40,12 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , bytestring >=0.11.5.4
     , containers >=0.6.7
+    , cryptonite >=0.30
     , directory >=1.3.7.1
     , hspec >=2.11.7
+    , memory >=0.18.0
     , mtl >=2.3.1
     , split >=0.2.5
     , unordered-containers >=0.2.20
@@ -58,9 +63,12 @@ executable aoc2023hs-exe
   build-depends:
       aoc2023hs
     , base >=4.7 && <5
+    , bytestring >=0.11.5.4
     , containers >=0.6.7
+    , cryptonite >=0.30
     , directory >=1.3.7.1
     , hspec >=2.11.7
+    , memory >=0.18.0
     , mtl >=2.3.1
     , split >=0.2.5
     , unordered-containers >=0.2.20
@@ -79,9 +87,12 @@ test-suite aoc2023hs-test
   build-depends:
       aoc2023hs
     , base >=4.7 && <5
+    , bytestring >=0.11.5.4
     , containers >=0.6.7
+    , cryptonite >=0.30
     , directory >=1.3.7.1
     , hspec >=2.11.7
+    , memory >=0.18.0
     , mtl >=2.3.1
     , split >=0.2.5
     , unordered-containers >=0.2.20
